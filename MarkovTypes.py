@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import itertools as it
+from collections import namedtuple
 import numpy as np
 from util import roulette
 
+# TODO rename single
 LONE_STATE = "state"
 LONE_AGENT = "agent"
+SINGLE_OBJECTIVE = "objective"
+NO_ACTION = "no-op"
+
+
+# TODO class Policy with a sample method, subclass DiscretePolicy with roulette
 
 
 class MarkovGame:
@@ -13,6 +20,10 @@ class MarkovGame:
     Mandatory implementation: (states,) sample_initial_state, is_state_terminal, agents, multi_actions,
     multi_expected_transition or multi_sample_transition
     """
+
+    def __init__(self):
+        self.RewardPerAgent = namedtuple("RewardPerAgent", self.agents())
+        self.RewardPerObjective = namedtuple("RewardPerObjective", self.objectives()) # TODO multiobjective...
 
     def agents(self):
         """Return the list of all agents' ID.
@@ -43,6 +54,8 @@ class MarkovGame:
         return False
 
     def multi_actions(self, state, agent):
+        # TODO rename agent_actions
+        # multidimensional & continuous actions
         """Return the list of all the agent's possible actions in given state.
 
         :param state
@@ -51,9 +64,7 @@ class MarkovGame:
         """
         raise NotImplementedError
 
-    def multi_expected_transition(self, state, actions):
-        # TODO pourquoi pas un dico de rewards?
-        # multiobjective!
+    def multi_expected_transition(self, state, actions):# TODO rename combined_expected_transition
         """Return a probability distribution for the next state and rewards.
 
         :param state: current state
@@ -62,7 +73,7 @@ class MarkovGame:
         """
         raise NotImplementedError
 
-    def multi_sample_transition(self, state, actions):
+    def multi_sample_transition(self, state, actions): # TODO rename combined_sample_transition
         """Return the next state and rewards according to the transition distribution.
 
         :param state: current state
@@ -72,6 +83,7 @@ class MarkovGame:
         return roulette(self.multi_expected_transition(state, actions))
 
     def gamma(self, state):
+        # TODO : self.is_gamma_state_dependent(), self.gamma(), self.gamma_t(state)
         """Return the discount factor.
 
         :rtype: float in [0, 1]
@@ -138,7 +150,7 @@ class DeterministicGame(MarkovGame):
     multi_certain_transition or multi_sample_transition
     """
 
-    def multi_certain_transition(self, state, actions):
+    def multi_certain_transition(self, state, actions): # TODO rename combined_deterministic_transition
         """Return the next state and rewards.
 
         :param state: current state
@@ -169,6 +181,7 @@ class SequentialMarkovGame(MarkovGame):
         raise NotImplementedError
 
     def actions(self, state):
+        # TODO implies all agents can make same actions! move to MDP
         """Return the list of the player's possible actions in given state.
 
         :param state: state
@@ -181,7 +194,7 @@ class SequentialMarkovGame(MarkovGame):
             return self.actions(state)
         return [None]
 
-    def expected_transition(self, state, action):
+    def expected_transition(self, state, action): # (self, state, action, agent)
         """Return a probability distribution for the next state and reward
         according to the current state and player's action.
 

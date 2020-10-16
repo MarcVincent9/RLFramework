@@ -2,6 +2,7 @@
 
 from MarkovTypes import *
 from util import timeout
+import numpy as np
 import random
 
 DEFAULT_TIME_LIMIT = 3600

@@ -7,23 +7,19 @@ import numpy as np
 from timeit import default_timer as timer
 
 
-def roulette(distribution):
+def roulette(distribution, size=None, replace=True, shuffle=False):
     """
-    randomly return one of the dictionary's key according to its probability (its value)
+    randomly return one of the dictionary's key according to its probability (its value).
+    Wrapper for numpy's choice method to work with dictionaries.
 
     :param distribution: dictionary {index: probability}
-    :rtype: index
+    :param size: int
+    :rtype: index (or ndarray if size specified)
     """
-    try:
-        rnd = np.random.rand()
-        tmp = 0
-        for s, p in distribution.items():
-            tmp += p
-            if tmp >= rnd:
-                return s
-    except AttributeError:
-        return None
-
+    return np.random.default_rng().choice(list(distribution.keys()), size, 
+                                          replace, p=list(distribution.values()),
+                                          shuffle=shuffle)
+    
 
 def timeout(func):
     """Decorator. When applied to a method which has a "time_limit" keyword, limits the method's runtime to

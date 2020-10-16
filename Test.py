@@ -101,3 +101,16 @@ eg.players[0].learning = False
 eg.add_player(1, HumanPlayer)
 eg.generate_experience(verbose=True)
 """
+
+
+class A:
+    
+    def __init__(self, deterministic=False):
+        if deterministic:
+            def deter(self):
+                return 2
+            setattr(A, "deter", deter)
+    
+    def expect(self):
+        return 1
+    
